@@ -10,4 +10,25 @@ const pool = mariadb.createPool({
   connectionLimit: 5,
 });
  
-export default pool;
+// Verbindung testen
+// pool.getConnection()
+//   .then(conn => {
+//     console.log('Datenbankverbindung erfolgreich');
+//     conn.release();
+//   })
+//   .catch(err => {
+//     console.error('Datenbankverbindung fehlgeschlagen:', err);
+//   });
+
+// export default pool;
+
+export default async function getDatabaseConnection () {
+  try {
+      const connection = await pool.getConnection();
+      console.log("Erfolgreich mit der Datenbank verbunden");
+      return connection;
+  } catch (error) {
+      console.error("Fehler bei der Verbindung zur Datenbank:", error);
+      throw error;
+  }
+}

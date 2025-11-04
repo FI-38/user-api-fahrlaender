@@ -1,7 +1,8 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import pool from './db.js';
+// import pool from './db.js';
+import getDatabaseConnection from './db.js';
 import cors from 'cors';
 import 'dotenv/config';
 import authMiddleware from './middleware/auth.js';
@@ -10,12 +11,10 @@ import loginRoute from './routes/login.js';
 import registerRoute from './routes/register.js';
 import { getProfile, updateProfile } from './routes/profile.js';
 
-const app = express();
-app.use(express.json());
+BigInt.prototype.toJSON = function() { return this.toString}
 
-app.get('/api', (req, res) => {
-    res.status(200).json({ status: 'ok' });
-});
+export const app = express();
+app.use(express.json());
 
 console.log('Zugelassene Hosts:', process.env.HOST.split(",") || '');
 app.use(cors({
@@ -24,13 +23,20 @@ app.use(cors({
     credentials: true
 }));
 
+app.get('/', (req, res) => {
+    res.status(200).json({ "hello": "world" });
+})
+
 app.post('/api/login', loginRoute);
 app.post('/api/register', registerRoute);
 app.get('/api/profile', ...getProfile);
 app.put('/api/profile', ...updateProfile);
 
-app.listen(process.env.PORT || 3001, () => {
-    console.log('Server läuft auf Port ' + process.env.PORT);
+app.get('/api/users', async (req, res) => {
+    const conn = await getDatabaseConnection();
+ 
+    const users = await conn.query('SELECT * FROM user');
+    res.status(200).json({users});
 });
 
 // // CORS konfigurieren
@@ -179,3 +185,8 @@ app.listen(process.env.PORT || 3001, () => {
 // // Start
 // const PORT = process.env.PORT || 3001;
 // app.listen(PORT, () => console.log(`API läuft auf http://localhost:${PORT}`));
+
+
+// app.listen(process.env.PORT || 3001, () => {
+//     console.log('Server läuft auf Port ' + process.env.PORT);
+// });

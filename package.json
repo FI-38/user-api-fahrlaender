@@ -5,8 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest --runInBand --detectOpenHandles --forceExit",
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "jest": {
+    "transform": {}
   },
   "keywords": [],
   "author": "",
@@ -20,6 +24,8 @@
     "mariadb": "^3.4.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
   }
 }
